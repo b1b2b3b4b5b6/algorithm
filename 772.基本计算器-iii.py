@@ -1,33 +1,11 @@
-# @before-stub-for-debug-begin
-from python3problem224 import *
-from typing import *
-# @before-stub-for-debug-end
-
-'''
-Author: your name
-Date: 2021-01-24 08:15:07
-LastEditTime: 2021-01-24 09:18:16
-LastEditors: Please set LastEditors
-Description: In User Settings Edit
-FilePath: /leetcode/224.基本计算器.py
-'''
 #
-# @lc app=leetcode.cn id=224 lang=python3
+# @lc app=leetcode.cn id=772 lang=python3
 #
-# [224] 基本计算器
+# [772] 基本计算器 III
 #
 
 # @lc code=start
-
-'''
-普通思路：
-    想办法转换成二叉树，然而算数表达式的二叉树要求数字都在叶子节点，所以必须确定正确父节点的才能构造下去
-        去外层括号，留下如【    +2】的表达式，生成节点，递归下去
-'''
-
-
 class Solution:
-
     def calculate(self, s: str) -> int:
         s = s.replace(' ', '')
 
@@ -111,6 +89,10 @@ class Solution:
                 return traverse(node.left) - traverse(node.right)
             if node.value == '*':
                 return traverse(node.left) * traverse(node.right)
+            if node.value == '/':
+                return int(traverse(node.left) / traverse(node.right))
+
+            print(f'illegal value{node.value}')
 
         return traverse(tree)
-    # @lc code=end
+# @lc code=end
