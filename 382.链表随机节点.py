@@ -17,8 +17,19 @@ class Solution:
         @param head The linked list's head.
         Note that the head is guaranteed to be not null, so it contains at least one node.
         """
+        self.m = {}
+        len = 0
+        node = head
+        while node != None:
+            self.m[len] = node
+            len += 1
+            node = node.next
 
     def getRandom(self) -> int:
+        l = len(self.m)
+        import random
+        r = random.randint(0, l-1)
+        return self.m[r].val
         """
         Returns a random node's value.
         """
