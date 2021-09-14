@@ -63,6 +63,14 @@
 #
 
 # @lc code=start
+'''
+双指针
+右指针前进,左指针缩略
+找到一个局部最优解时,左指针前进一位
+所处字符数量恰好时进判断
+'''
+
+
 class Solution:
     def minWindow(self, s: str, t: str) -> str:
         if len(s) < len(t):
