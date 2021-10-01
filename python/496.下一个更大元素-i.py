@@ -59,6 +59,27 @@
 #
 
 # @lc code=start
+'''
+使用单调栈
+'''
+
+
 class Solution:
     def nextGreaterElement(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        stack = []
+        res = {}
+        for n in range(len(nums2) - 1, -1, -1):
+            while len(stack) > 0 and nums2[n] >= stack[-1]:
+                stack.pop(-1)
+
+            if len(stack) == 0:
+                res[nums2[n]] = -1
+            else:
+                res[nums2[n]] = stack[-1]
+
+            stack.append(nums2[n])
+        out = []
+        for num in nums1:
+            out.append(res[num])
+        return out
         # @lc code=end
