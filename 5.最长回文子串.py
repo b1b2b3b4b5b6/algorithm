@@ -1,16 +1,3 @@
-# @before-stub-for-debug-begin
-from python3problem5 import *
-from typing import *
-# @before-stub-for-debug-end
-
-'''
-Author: your name
-Date: 2020-12-25 13:24:20
-LastEditTime: 2020-12-29 06:24:41
-LastEditors: Please set LastEditors
-Description: In User Settings Edit
-FilePath: /leetcode/5.最长回文子串.py
-'''
 #
 # @lc app=leetcode.cn id=5 lang=python3
 #
@@ -19,39 +6,52 @@ FilePath: /leetcode/5.最长回文子串.py
 
 # @lc code=start
 
-
 '''
-通常逻辑：
-对每一字符进行判断，获得以此字符为中心的回文字符串，有两种情况：
-    偶数
-    奇数
-'''
+遍历
 
-# 算法复杂度：n^2
-# 空间复杂度：n
+每个字符，两种情况判断
+'''
 
 
 class Solution:
     def longestPalindrome(self, s: str) -> str:
-        ss = ''
-        for i in range(len(s)):
-            ts = s[i]
-            for j in range(1, min(i, len(s) - 1 - i) + 1):
-                if s[i - j] == s[i + j]:
-                    ts = s[(i - j):(i + j + 1)]
-                    None
-                else:
+        def get_max(n):
+            for i in range(0, len(s)):
+                if n-i < 0 or n+i > len(s) - 1:
                     break
-            if len(ts) > len(ss):
-                ss = ts
-            ts = s[i]
-            for j in range(1, min(i, len(s) - 1 - i + 1) + 1):
-                if s[i - j] == s[i - 1 + j]:
-                    ts = s[(i - j):(i - 1 + j + 1)]
-                    None
-                else:
+                if s[n-i] != s[n+i]:
                     break
-            if len(ts) > len(ss):
-                ss = ts
-        return ss
-# @lc code=end
+
+            if i == 0:
+                temp_1 = s[n]
+            else:
+                i = i - 1
+                temp_1 = s[n-i:n+i+1]
+
+            temp_2 = 0
+            for i in range(0, len(s)):
+                if n-i < 0 or n+i+1 > len(s) - 1:
+                    break
+                if s[n-i] != s[n+i+1]:
+                    break
+
+            if i == 0:
+                temp_2 = ''
+            else:
+                i = i-1
+                temp_2 = s[n-i:n+i+1+1]
+
+            if len(temp_2) > len(temp_1):
+                return temp_2
+            else:
+                return temp_1
+
+        res = ''
+        for n in range(len(s)):
+            temp_2 = get_max(n)
+            if len(temp_2) > len(res):
+                res = temp_2
+
+        return res
+
+        # @lc code=end

@@ -1,30 +1,46 @@
-# @before-stub-for-debug-begin
-from python3problem106 import *
-from typing import *
-# @before-stub-for-debug-end
-
-'''
-Author: your name
-Date: 2020-12-16 07:17:09
-LastEditTime: 2020-12-18 09:14:40
-LastEditors: Please set LastEditors
-Description: In User Settings Edit
-FilePath: /python/home/project/leetcode/106.从中序与后序遍历序列构造二叉树.py
-'''
 #
 # @lc app=leetcode.cn id=106 lang=python3
 #
 # [106] 从中序与后序遍历序列构造二叉树
 #
+# https://leetcode-cn.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/description/
+#
+# algorithms
+# Medium (72.12%)
+# Likes:    567
+# Dislikes: 0
+# Total Accepted:    129.3K
+# Total Submissions: 179.2K
+# Testcase Example:  '[9,3,15,20,7]\n[9,15,7,20,3]'
+#
+# 根据一棵树的中序遍历与后序遍历构造二叉树。
+#
+# 注意:
+# 你可以假设树中没有重复的元素。
+#
+# 例如，给出
+#
+# 中序遍历 inorder = [9,3,15,20,7]
+# 后序遍历 postorder = [9,15,7,20,3]
+#
+# 返回如下的二叉树：
+#
+# ⁠   3
+# ⁠  / \
+# ⁠ 9  20
+# ⁠   /  \
+# ⁠  15   7
+#
+#
+#
 
 # @lc code=start
 # Definition for a binary tree node.
 # class TreeNode:
-#     def __init__(self, x):
-#         self.val = x
-#         self.left = None
-#         self.right = None
-
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
 '''
 解体思路，从最简单的情况出发，如果二叉树只有左，右，根:
   A  
@@ -34,33 +50,29 @@ B    C
     1：先根据后序遍历确定根节点A（节点取值）
     2：根据中序遍历确定左子树B，右子树C
 由于步骤2在取值之后，故递归采用前序遍历
-递归时，注意索引的处理
-'''
 
-# 时间复杂度：N
-# 空间复杂度：N
+可以使用索引减少拷贝,提高效率
+'''
 
 
 class Solution:
-    def traverse_tree(self, post_list, post_start, post_end, in_list, in_start, in_end):
-        if post_start > post_end or in_start > in_end:
-            return None
-
-        tree = TreeNode(0)
-
-        tree.val = post_list[post_end]
-        root_offset = in_list.index(tree.val)
-        left_num = root_offset - in_start
-
-        tree.left = self.traverse_tree(
-            post_list, post_start, post_start - 1 + left_num, in_list, in_start, root_offset - 1)
-        tree.right = self.traverse_tree(
-            post_list, post_start + left_num, post_end - 1, in_list, root_offset + 1, in_end)
-
-        return tree
-
     def buildTree(self, inorder: List[int], postorder: List[int]) -> TreeNode:
-        TreeNode = self.traverse_tree(postorder, 0, len(
-            postorder) - 1, inorder, 0, len(inorder) - 1)
-        return TreeNode
+        def rebuild(last, mid):
+            if len(mid) == 0:
+                return None
+            root = TreeNode(last[-1])
+
+            offset = mid.index(root.val)
+            mid_left = list(mid[0:offset])
+            mid_right = list(mid[offset+1:])
+
+            last_left = list(last[0:len(mid_left)])
+            last_right = list(last[len(mid_left):-1])
+
+            root.left = rebuild(last_left, mid_left)
+            root.right = rebuild(last_right, mid_right)
+            return root
+
+        root = rebuild(postorder, inorder)
+        return root
         # @lc code=end

@@ -1,35 +1,54 @@
-'''
-Author: your name
-Date: 2020-12-29 08:54:45
-LastEditTime: 2020-12-29 08:59:45
-LastEditors: Please set LastEditors
-Description: In User Settings Edit
-FilePath: /leetcode/266.回文排列.py
-'''
 #
 # @lc app=leetcode.cn id=266 lang=python3
 #
 # [266] 回文排列
 #
+# https://leetcode-cn.com/problems/palindrome-permutation/description/
+#
+# algorithms
+# Easy (67.13%)
+# Likes:    48
+# Dislikes: 0
+# Total Accepted:    6.6K
+# Total Submissions: 9.8K
+# Testcase Example:  '"code"'
+#
+# 给定一个字符串，判断该字符串中是否可以通过重新排列组合，形成一个回文字符串。
+#
+# 示例 1：
+#
+# 输入: "code"
+# 输出: false
+#
+# 示例 2：
+#
+# 输入: "aab"
+# 输出: true
+#
+# 示例 3：
+#
+# 输入: "carerac"
+# 输出: true
+#
+#
 
 # @lc code=start
-
-
 class Solution:
     def canPermutePalindrome(self, s: str) -> bool:
-        memo = {}
+        d = {}
         for c in s:
-            if c not in memo:
-                memo[c] = 1
+            if c not in d:
+                d[c] = 1
             else:
-                memo[c] = memo[c] + 1
-        single = 0
-        for val in memo.values():
-            if (val % 2) != 0:
-                single = single + 1
+                d[c] += 1
 
-        if single > 1:
+        count = 0
+        for v in d.values():
+            if v % 2 > 0:
+                count += 1
+
+        if count > 1:
             return False
         else:
             return True
-            # @lc code=end
+# @lc code=end

@@ -1,71 +1,81 @@
-'''
-Author: your name
-Date: 2020-12-23 07:27:16
-LastEditTime: 2020-12-23 08:34:28
-LastEditors: Please set LastEditors
-Description: In User Settings Edit
-FilePath: /leetcode/435.无重叠区间.py
-'''
 #
 # @lc app=leetcode.cn id=435 lang=python3
 #
 # [435] 无重叠区间
 #
-
-
-'''
-暴力递归：
-在剩余区间不重叠的情况下，移除最少数量区间
-状态：剩余区间
-选择：移除区间
-最优子结构：剩余的最多不重叠区间数量
-base_case:
-    当剩余区间互不重叠时，返回区间数
-    当剩余区间重叠时，返回0
-状态转移：
-    选择移除某个区间，获得其返回，判所有可能中最大的
-
-考虑发现：
-    当移除每种可能的区间时，可能无法找到最优子结构，故无法递归求解
-
-变换问题，暴力递归：
-给定区间列表，在保证不重叠的情况下，最多可插入的区间数
-
-状态：已有区间列表
-选择：添加一个区间
-最优子结构：获得的最多不重叠区间数量
-base_case:
-    已有区间列表为空时，返回1
-    给定区间列表为空时，返回已有区间列表数
-    所有可能都重叠时，返回已有区间列表数
-状态转移：
-    选择添加某个区间，获得其返回，判所有可能性中最大的
-
-考虑发现：
-    当移除每种可能的区间时，可能无法找到最优子结构，故无法递归求解
-
-贪心法：
-按照end排序
-
-1. 从区间集合 intvs 中选择一个区间 x，这个 x 是在当前所有区间中**结束最早的**（end 最小）。
-2. 把所有与 x 区间相交的区间从区间集合 intvs 中删除。
-3. 重复步骤 1 和 2，直到 intvs 为空为止。之前选出的那些 x 就是最大不相交子集。
-
-'''
+# https://leetcode-cn.com/problems/non-overlapping-intervals/description/
+#
+# algorithms
+# Medium (50.96%)
+# Likes:    504
+# Dislikes: 0
+# Total Accepted:    95.5K
+# Total Submissions: 187.9K
+# Testcase Example:  '[[1,2],[2,3],[3,4],[1,3]]'
+#
+# 给定一个区间的集合，找到需要移除区间的最小数量，使剩余区间互不重叠。
+#
+# 注意:
+#
+#
+# 可以认为区间的终点总是大于它的起点。
+# 区间 [1,2] 和 [2,3] 的边界相互“接触”，但没有相互重叠。
+#
+#
+# 示例 1:
+#
+#
+# 输入: [ [1,2], [2,3], [3,4], [1,3] ]
+#
+# 输出: 1
+#
+# 解释: 移除 [1,3] 后，剩下的区间没有重叠。
+#
+#
+# 示例 2:
+#
+#
+# 输入: [ [1,2], [1,2], [1,2] ]
+#
+# 输出: 2
+#
+# 解释: 你需要移除两个 [1,2] 来使剩下的区间没有重叠。
+#
+#
+# 示例 3:
+#
+#
+# 输入: [ [1,2], [2,3] ]
+#
+# 输出: 0
+#
+# 解释: 你不需要移除任何区间，因为它们已经是无重叠的了。
+#
+#
+#
 
 # @lc code=start
+'''
+暴力递归效率太低
+
+使用贪心法：
+    将集合按end递增排序，逐个判断重叠剔除
+'''
 
 
 class Solution:
     def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:
         intervals.sort(key=lambda x: x[1])
-        ret = 0
-        pre = -float('INF')
-        for l in intervals:
-            if l[0] >= pre:
-                ret = ret + 1
-                pre = l[1]
-            else:
-                continue
-        return len(intervals) - ret
+        res = []
+
+        end = -float('INF')
+        for v in intervals:
+            now_start = v[0]
+            now_end = v[1]
+
+            if now_start >= end:
+                res.append(v)
+                end = now_end
+
+        return len(intervals) - len(res)
         # @lc code=end

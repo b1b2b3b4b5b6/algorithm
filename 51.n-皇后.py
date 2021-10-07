@@ -1,88 +1,117 @@
-# @before-stub-for-debug-begin
-from python3problem51 import *
-from typing import *
-# @before-stub-for-debug-end
-
-'''
-Author: your name
-Date: 2021-01-12 03:42:09
-LastEditTime: 2021-01-13 09:00:30
-LastEditors: Please set LastEditors
-Description: In User Settings Edit
-FilePath: /leetcode/51.n-皇后.py
-'''
 #
 # @lc app=leetcode.cn id=51 lang=python3
 #
 # [51] N 皇后
 #
+# https://leetcode-cn.com/problems/n-queens/description/
+#
+# algorithms
+# Hard (73.89%)
+# Likes:    995
+# Dislikes: 0
+# Total Accepted:    147.7K
+# Total Submissions: 199.8K
+# Testcase Example:  '4'
+#
+# n 皇后问题 研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并且使皇后彼此之间不能相互攻击。
+#
+# 给你一个整数 n ，返回所有不同的 n 皇后问题 的解决方案。
+#
+#
+#
+# 每一种解法包含一个不同的 n 皇后问题 的棋子放置方案，该方案中 'Q' 和 '.' 分别代表了皇后和空位。
+#
+#
+#
+# 示例 1：
+#
+#
+# 输入：n = 4
+# 输出：[[".Q..","...Q","Q...","..Q."],["..Q.","Q...","...Q",".Q.."]]
+# 解释：如上图所示，4 皇后问题存在两个不同的解法。
+#
+#
+# 示例 2：
+#
+#
+# 输入：n = 1
+# 输出：[["Q"]]
+#
+#
+#
+#
+# 提示：
+#
+#
+# 1
+# 皇后彼此不能相互攻击，也就是说：任何两个皇后都不能处于同一条横行、纵行或斜线上。
+#
+#
+#
+#
+#
 
 # @lc code=start
 
 '''
-最优子结构：
-
-状态：
-    当前棋盘
-    剩余皇后数量
-选择：
-    按顺序，放置皇后，满足要求(每行只能放一个)
-base_case:
-    剩余皇后数量为0
-    无法放置皇后
-状态转移：
-    能放就放
-
-考虑到棋盘是矩形，必然存在对称方案，
+动态规划：
+    状态：
+        当前棋盘
+        剩余皇后
+    选择：
+        所有合法点放皇后
+    
+    base_case：
+        皇后没了：ok
+        棋盘放不下：no
 '''
 
 
 class Solution:
-
     def solveNQueens(self, n: int) -> List[List[str]]:
+        ori = [['.' for j in range(n)] for i in range(n)]
         res = []
-        board = '.' * (n * n)
 
-        def traverse(board, left, now_row):
-            nonlocal res
+        def dp(chese, left):
+            print(chese)
             if left == 0:
-                res.append(board)
+                res.append(chese)
                 return
+            now = n - left
+            for k, c in enumerate(chese[now]):
+                if c == '.':
+                    new_chese = []
+                    for row in chese:
+                        new_chese.append(list(row))
+                    new_chese[now][k] = 'Q'
+                    for row in new_chese[now+1:]:
+                        row[k] = '#'
+                    x = k + 1
+                    y = now + 1
+                    while 0 <= x < n and 0 <= y < n:
+                        new_chese[y][x] = '#'
+                        x += 1
+                        y += 1
 
-            if now_row >= n:
-                return
+                    x = k - 1
+                    y = now + 1
+                    while 0 <= x < n and 0 <= y < n:
+                        new_chese[y][x] = '#'
+                        x -= 1
+                        y += 1
+                    dp(new_chese, left - 1)
+            return
 
-            for col_offset in range(n):
-                q_index = col_offset + now_row*n
-                if board[q_index] != '.':
-                    continue
+        dp(ori, n)
+        print(res)
+        out = []
+        for chese in res:
+            out_chese = []
+            for row in chese:
+                s = ''.join(row)
+                s = s.replace('#', '.')
+                out_chese.append(s)
 
-                t_board = list(board)
-
-                t_board[q_index] = 'Q'
-
-                q_row = now_row
-                q_col = col_offset
-                yes = True
-                for t_index in range(0, now_row * n, 1):
-                    if 'Q' == t_board[t_index]:
-                        t_row = t_index // n
-                        t_col = t_index % n
-
-                        if t_col == q_col or abs(q_row - t_row) == abs(q_col - t_col):
-                            yes = False
-                            break
-                if yes:
-                    traverse(t_board, left - 1, now_row + 1)
-        traverse(board, n, 0)
-
-        res_board = []
-        for t_board in res:
-            res_one = []
-            res_str = ''.join(t_board)
-            while len(res_str) > 0:
-                res_one.append(res_str[0: n])
-                res_str = res_str[n:]
-            res_board.append(res_one)
-        return res_board
+            out.append(out_chese)
+        return out
         # @lc code=end

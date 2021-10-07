@@ -1,152 +1,127 @@
-# @before-stub-for-debug-begin
-from python3problem887 import *
-from typing import *
-# @before-stub-for-debug-end
-
-'''
-Author: your name
-Date: 2020-12-18 07:04:21
-LastEditTime: 2020-12-22 09:09:30
-LastEditors: Please set LastEditors
-Description: In User Settings Edit
-FilePath: /leetcode/887.鸡蛋掉落.py
-'''
 #
 # @lc app=leetcode.cn id=887 lang=python3
 #
 # [887] 鸡蛋掉落
 #
-
-
-'''
-普通解法：
-求最坏状态下最小移动次数
-状态：鸡蛋个数K，面对楼层N
-选择：选择扔鸡蛋的楼层
-最优子结构：移动次数
-base_case:
-    当K=1时，需要从底层扔鸡蛋，返回最坏情况N
-    当N=0时，不需要扔鸡蛋，返回0
-状态转移：
-    在i层扔，鸡蛋碎了，面对(K-1, i-1）
-    在i层扔，鸡蛋没碎，面对(K, N-i)
-
-高效解法：
-由于这种题目的解法无外乎穷举，所以要找到k(鸡蛋数),n(楼层),m(移动次数)的恰当状态转移
-能够避免求最大值，尝试转换问题碰运气，观察原解法方程，由于i导致状态方程非单调，故考虑将i作为返回值
-
-变换问题为：
-    在已知k(鸡蛋数)，m(移动次数)的情况下，求最坏情况下，能够确定的最大楼层数N
-    
-状态：鸡蛋个数K，移动次数m
-选择：选择扔鸡蛋的楼层
-最优子结构：楼层数N
-base_case:
-    当K=0时，N=0
-    当m=0时，N=0
-状态转移：
-    在（k，m）情况下扔
-        如果鸡蛋碎了，则需要下楼，面对(k-1, m-1)
-        如果鸡蛋没碎，则需要上楼，面对(k, m-1)
-    最优子结构为1 + f(k-1,m-1) + f(k,m-1)
-'''
+# https://leetcode-cn.com/problems/super-egg-drop/description/
+#
+# algorithms
+# Hard (29.16%)
+# Likes:    687
+# Dislikes: 0
+# Total Accepted:    51.1K
+# Total Submissions: 175.2K
+# Testcase Example:  '1\n2'
+#
+# 给你 k 枚相同的鸡蛋，并可以使用一栋从第 1 层到第 n 层共有 n 层楼的建筑。
+#
+# 已知存在楼层 f ，满足 0  ，任何从 高于 f 的楼层落下的鸡蛋都会碎，从 f 楼层或比它低的楼层落下的鸡蛋都不会破。
+#
+# 每次操作，你可以取一枚没有碎的鸡蛋并把它从任一楼层 x 扔下（满足 1
+# ）。如果鸡蛋碎了，你就不能再次使用它。如果某枚鸡蛋扔下后没有摔碎，则可以在之后的操作中 重复使用 这枚鸡蛋。
+#
+# 请你计算并返回要确定 f 确切的值 的 最小操作次数 是多少？
+#
+#
+# 示例 1：
+#
+#
+# 输入：k = 1, n = 2
+# 输出：2
+# 解释：
+# 鸡蛋从 1 楼掉落。如果它碎了，肯定能得出 f = 0 。
+# 否则，鸡蛋从 2 楼掉落。如果它碎了，肯定能得出 f = 1 。
+# 如果它没碎，那么肯定能得出 f = 2 。
+# 因此，在最坏的情况下我们需要移动 2 次以确定 f 是多少。
+#
+#
+# 示例 2：
+#
+#
+# 输入：k = 2, n = 6
+# 输出：3
+#
+#
+# 示例 3：
+#
+#
+# 输入：k = 3, n = 14
+# 输出：4
+#
+#
+#
+#
+# 提示：
+#
+#
+# 1
+# 1
+#
+#
+#
 
 # @lc code=start
 
-# 变换问题，迭代
-# 算法复杂度：kn
-# 空间复杂度：kn
+'''
+最坏情况的最少次数
+
+最坏:碎了和没碎的最坏情况
+最少:在最坏前提下的最优解
+
+
+状态:dp(left_k, left_n)
+    选择:
+        遍历1-i扔鸡蛋,取最小
+            碎了:dp(left_k-1, i-1) + 1
+            没碎:dp(left_k, left_n - i) + 1
+base_case:
+    left_k = 1:
+        return left_n
+    left_n = 0:
+        return 0
+
+动态规划+备忘录 会超时(将遍历转为二分法求凹点)
+'''
 
 
 class Solution:
-    def superEggDrop(self, K: int, N: int) -> int:
-        memo = [[0 for col in range(N + 1)]for row in range(K + 1)]
+    def superEggDrop(self, k: int, n: int) -> int:
+        memo = {}
 
-        ret = 0
-        m = 1
-        while (ret < N):
-            for e in range(1, K + 1):
-                memo[e][m] = 1 + memo[e-1][m-1] + memo[e][m-1]
-                ret = memo[e][m]
-            m = m + 1
+        def dp(left_k, left_n):
+            if left_k == 1:
+                return left_n
+            if left_n == 0:
+                return 0
 
-        return m - 1
-        # @lc code=end
+            if (left_k, left_n) in memo:
+                return memo[(left_k, left_n)]
 
-# 变换问题，递归，备忘录，会超时
-# 算法复杂度：kn
-# 空间复杂度：kn
-# class Solution:
-#     def superEggDrop(self, K: int, N: int) -> int:
-#         memo = {}
+            res = float('INF')
 
-#         def dp(egg, m):
-#             if (egg, m) in memo:
-#                 return memo[(egg, m)]
-#             if egg == 0 or m == 0:
-#                 return 0
+            start = 1
+            end = left_n
 
-#             memo[(egg, m)] = 1 + dp(egg - 1, m - 1) + dp(egg, m - 1)
-#             return memo[(egg, m)]
-#         dp(K, N)
-#         print(memo)
-#         for key, n in memo.items():
-#             if key[0] == K and n >= N:
-#                 return key[1]
+            while end >= start:
+                mid = (end + start)//2
+                broken = dp(left_k-1, mid-1) + 1
+                not_broken = dp(left_k, left_n - mid) + 1
 
-# 递归，备忘录，加二分法
-# 算法复杂度：knlog(n)
-# 空间复杂度：kn
-# class Solution:
-#     def superEggDrop(self, K: int, N: int) -> int:
-#         memo = {}
+                if broken > not_broken:
+                    end = mid - 1
+                    res = min(res, broken)
+                else:
+                    start = mid + 1
+                    res = min(res, not_broken)
+            memo[(left_k, left_n)] = res
 
-#         def dp(egg, n):
-#             if (egg, n) in memo:
-#                 return memo[(egg, n)]
-#             if egg == 1:
-#                 return n
-#             if n == 0:
-#                 return 0
+            return res
 
-#             ret = float('INF')
-#             l = 1
-#             h = n
-#             while l <= h:
-#                 mid = (l + h) // 2
+        return dp(k, n)
 
-#                 broken = dp(egg - 1, mid - 1)
-#                 not_broken = dp(egg, n - mid)
 
-#                 if broken > not_broken:
-#                     h = mid - 1
-#                     ret = min(ret, broken + 1)
-#                 else:
-#                     l = mid + 1
-#                     ret = min(ret, not_broken + 1)
+'''
 
-#             memo[(egg, n)] = ret
-#             return ret
-#         return dp(K, N)
+'''
 
-# 递归，备忘录，会超时
-# 时间复杂度：n*kn=kn^2
-# 空间复杂度：kn
-# class Solution:
-#     def superEggDrop(self, K: int, N: int) -> int:
-#         memo = {}
-
-#         def dp(egg, n):
-#             if (egg, n) in memo:
-#                 return memo[(egg, n)]
-#             if egg == 1:
-#                 return n
-#             if n == 0:
-#                 return 0
-
-#             ret = float('INF')
-#             for i in range(1, n + 1):
-#                 ret = min(ret, max(dp(egg - 1, i - 1), dp(egg, n - i)) + 1)
-#             memo[(egg, n)] = ret
-#             return ret
-#         return dp(K, N)
+# @lc code=end

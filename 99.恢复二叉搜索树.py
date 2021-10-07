@@ -1,20 +1,48 @@
-# @before-stub-for-debug-begin
-from python3problem99 import *
-from typing import *
-# @before-stub-for-debug-end
-
-'''
-Author: your name
-Date: 2020-12-16 06:33:30
-LastEditTime: 2020-12-18 09:13:33
-LastEditors: Please set LastEditors
-Description: In User Settings Edit
-FilePath: /python/home/project/leetcode/99.恢复二叉搜索树.py
-'''
 #
 # @lc app=leetcode.cn id=99 lang=python3
 #
 # [99] 恢复二叉搜索树
+#
+# https://leetcode-cn.com/problems/recover-binary-search-tree/description/
+#
+# algorithms
+# Medium (61.39%)
+# Likes:    548
+# Dislikes: 0
+# Total Accepted:    68.6K
+# Total Submissions: 111.9K
+# Testcase Example:  '[1,3,null,null,2]'
+#
+# 给你二叉搜索树的根节点 root ，该树中的两个节点被错误地交换。请在不改变其结构的情况下，恢复这棵树。
+#
+# 进阶：使用 O(n) 空间复杂度的解法很容易实现。你能想出一个只使用常数空间的解决方案吗？
+#
+#
+#
+# 示例 1：
+#
+#
+# 输入：root = [1,3,null,null,2]
+# 输出：[3,1,null,null,2]
+# 解释：3 不能是 1 左孩子，因为 3 > 1 。交换 1 和 3 使二叉搜索树有效。
+#
+#
+# 示例 2：
+#
+#
+# 输入：root = [3,1,4,null,null,2]
+# 输出：[2,1,4,null,null,3]
+# 解释：2 不能在 3 的右子树中，因为 2 < 3 。交换 2 和 3 使二叉搜索树有效。
+#
+#
+#
+# 提示：
+#
+#
+# 树上节点的数目在范围 [2, 1000] 内
+# -2^31
+#
+#
 #
 
 # @lc code=start
@@ -24,48 +52,52 @@ FilePath: /python/home/project/leetcode/99.恢复二叉搜索树.py
 #         self.val = val
 #         self.left = left
 #         self.right = right
-
-# 时间复杂度：N
-# 空间复杂度：N
+'''
+考虑两种情况：
+    相邻
+    不相邻
+'''
 
 
 class Solution:
+    def recoverTree(self, root: Optional[TreeNode]) -> None:
+        """
+        Do not return anything, modify root in-place instead.
+        """
+        last_node = None
+        first_list = []
+        second_list = []
 
-    last_node = None
-    first_node = None
-    first_node_next = None
-    second_node = None
-
-    def traverse_tree(self, node):
-        if node == None:
-            return None
-        self.traverse_tree(node.left)
-
-        if self.last_node == None:
-            self.last_node = node
-        else:
-            if node.val < self.last_node.val:
-                if self.first_node == None:
-                    self.first_node = self.last_node
-                    self.first_node_next = node
+        def traverse(node):
+            nonlocal first_list, second_list, last_node
+            if node == None:
+                return
+            traverse(node.left)
+            print(node.val)
+            if last_node == None:
+                None
+            elif node.val <= last_node.val:
+                if len(first_list) == 0:
+                    first_list.append(last_node)
+                    first_list.append(node)
                 else:
-                    self.second_node = node
-            self.last_node = node
+                    second_list.append(last_node)
+                    second_list.append(node)
 
-        self.traverse_tree(node.right)
-        return node
+            last_node = node
+            traverse(node.right)
 
-    def recoverTree(self, root: TreeNode) -> None:
-        self.traverse_tree(root)
-        if self.first_node != None and self.second_node == None:
-            print('one location')
-            temp_val = self.first_node.val
-            self.first_node.val = self.first_node_next.val
-            self.first_node_next.val = temp_val
+        traverse(root)
+        print(first_list)
+        print(second_list)
+        if 0 == len(second_list):
+            temp = first_list[0].val
+            first_list[0].val = first_list[1].val
+            first_list[1].val = temp
+        else:
+            temp = first_list[0].val
+            first_list[0].val = second_list[1].val
+            second_list[1].val = temp
 
-        if self.first_node != None and self.second_node != None:
-            print('two location')
-            temp_val = self.first_node.val
-            self.first_node.val = self.second_node.val
-            self.second_node.val = temp_val
+
 # @lc code=end

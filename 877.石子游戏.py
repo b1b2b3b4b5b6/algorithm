@@ -1,83 +1,97 @@
-# @before-stub-for-debug-begin
-from python3problem877 import *
-from typing import *
-# @before-stub-for-debug-end
-
 #
 # @lc app=leetcode.cn id=877 lang=python3
 #
 # [877] 石子游戏
 #
-
-'''
-暴力穷举
-求a-b
-状态：开始的索引start，结束的索引end
-选择：先手和后手的选择组合，2*2
-最优子结构：先手-后手 的最大值
-base_case:
-    当start>=end时，返回0
-状态转移：
-    dp(start, end) = max(4种可能)
-'''
-
+# https://leetcode-cn.com/problems/stone-game/description/
+#
+# algorithms
+# Medium (75.71%)
+# Likes:    356
+# Dislikes: 0
+# Total Accepted:    67.9K
+# Total Submissions: 89.6K
+# Testcase Example:  '[5,3,4,5]'
+#
+# 亚历克斯和李用几堆石子在做游戏。偶数堆石子排成一行，每堆都有正整数颗石子 piles[i] 。
+#
+# 游戏以谁手中的石子最多来决出胜负。石子的总数是奇数，所以没有平局。
+#
+# 亚历克斯和李轮流进行，亚历克斯先开始。 每回合，玩家从行的开始或结束处取走整堆石头。
+# 这种情况一直持续到没有更多的石子堆为止，此时手中石子最多的玩家获胜。
+#
+# 假设亚历克斯和李都发挥出最佳水平，当亚历克斯赢得比赛时返回 true ，当李赢得比赛时返回 false 。
+#
+#
+#
+# 示例：
+#
+#
+# 输入：[5,3,4,5]
+# 输出：true
+# 解释：
+# 亚历克斯先开始，只能拿前 5 颗或后 5 颗石子 。
+# 假设他取了前 5 颗，这一行就变成了 [3,4,5] 。
+# 如果李拿走前 3 颗，那么剩下的是 [4,5]，亚历克斯拿走后 5 颗赢得 10 分。
+# 如果李拿走后 5 颗，那么剩下的是 [3,4]，亚历克斯拿走后 4 颗赢得 9 分。
+# 这表明，取前 5 颗石子对亚历克斯来说是一个胜利的举动，所以我们返回 true 。
+#
+#
+#
+#
+# 提示：
+#
+#
+# 2
+# piles.length 是偶数。
+# 1
+# sum(piles) 是奇数。
+#
+#
+#
 
 # @lc code=start
+'''
+动态规划
 
-# 观察memo矩阵发现，可以斜向遍历直到获得顶角值
-# 迭代
-# 算法复杂度：N^2/4
-# 空间复杂度：N^2/4
+状态:dp(start,end)
+    选择:
+        前面: dp(start,end) = piles[start] + dp(start+2, end)
+                            = piles[start] + dp(start+1, end-1)
+        后面: dp(start,end) = piles[end] + dp(start+1, end-1)
+                            piles[end] + dp(start, end-2)
+        max = (前面,后面)
+base_case:
+    start > end:
+        return 0
+
+'''
+
 
 class Solution:
-
     def stoneGame(self, piles: List[int]) -> bool:
+        sum = 0
+        for i in piles:
+            sum += i
         memo = {}
-        max_step = len(piles) - 1
 
-        step = 1
-        for i in range(max_step - step + 1):
-            memo[i, i + 1] = abs(piles[i] - piles[i + 1])
-        step = step + 2
-        while step <= max_step:
-            for start in range(max_step - step + 1):
-                end = start + step
-                choose1 = abs(piles[start] - piles[end]) + \
-                    memo[start + 1, end - 1]
-                choose2 = piles[start] - \
-                    piles[start + 1] + memo[start + 2, end]
-                choose3 = piles[end] - piles[end - 1] + memo[start, end - 2]
+        def dp(start, end):
+            if start > end:
+                return 0
 
-                memo[start, end] = max(choose1, choose2, choose3)
-            step = step + 2
-        if memo[0, max_step] > 0:
+            if (start, end) in memo:
+                return memo[(start, end)]
+
+            memo[(start, end)] = max(
+                piles[start] + max(dp(start+2, end), dp(start+1, end-1)),
+                piles[end] + max(dp(start+1, end-1), dp(start, end-2)),
+            )
+            return memo[(start, end)]
+
+        res = dp(0, len(piles) - 1)
+
+        if res > sum - res:
             return True
         else:
             return False
-# @lc code=end
-
-
-# 递归
-# 算法复杂度：N^2/4
-# 空间复杂度：N^2/4
-# class Solution:
-
-#     def stoneGame(self, piles: List[int]) -> bool:
-#         memo = {}
-
-#         def dp(start, end):
-
-#             if start >= end:
-#                 return 0
-#             if (start, end) in memo:
-#                 return memo[(start, end)]
-#             choose1 = piles[start] + dp(start + 2, end) - piles[start + 1]
-#             choose2 = piles[start] + dp(start + 1, end - 1) - piles[end]
-#             choose3 = piles[end] + dp(start, end - 2) - piles[end - 1]
-#             choose4 = piles[end] + dp(start + 1, end - 1) - piles[start + 1]
-#             memo[(start, end)] = max(choose1, choose2, choose3, choose4)
-#             return memo[(start, end)]
-#         if dp(0, len(piles) - 1) > 0:
-#             return True
-#         else:
-#             return False
+        # @lc code=end

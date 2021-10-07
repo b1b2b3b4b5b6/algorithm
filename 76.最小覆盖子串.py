@@ -1,72 +1,128 @@
-# @before-stub-for-debug-begin
-from python3problem76 import *
-from typing import *
-# @before-stub-for-debug-end
-
-'''
-Author: your name
-Date: 2021-01-20 07:59:57
-LastEditTime: 2021-01-22 01:14:48
-LastEditors: Please set LastEditors
-Description: In User Settings Edit
-FilePath: /leetcode/76.最小覆盖子串.py
-'''
 #
 # @lc app=leetcode.cn id=76 lang=python3
 #
 # [76] 最小覆盖子串
 #
+# https://leetcode-cn.com/problems/minimum-window-substring/description/
+#
+# algorithms
+# Hard (42.44%)
+# Likes:    1328
+# Dislikes: 0
+# Total Accepted:    176.2K
+# Total Submissions: 415K
+# Testcase Example:  '"ADOBECODEBANC"\n"ABC"'
+#
+# 给你一个字符串 s 、一个字符串 t 。返回 s 中涵盖 t 所有字符的最小子串。如果 s 中不存在涵盖 t 所有字符的子串，则返回空字符串 ""
+# 。
+#
+#
+#
+# 注意：
+#
+#
+# 对于 t 中重复字符，我们寻找的子字符串中该字符数量必须不少于 t 中该字符数量。
+# 如果 s 中存在这样的子串，我们保证它是唯一的答案。
+#
+#
+#
+#
+# 示例 1：
+#
+#
+# 输入：s = "ADOBECODEBANC", t = "ABC"
+# 输出："BANC"
+#
+#
+# 示例 2：
+#
+#
+# 输入：s = "a", t = "a"
+# 输出："a"
+#
+#
+# 示例 3:
+#
+#
+# 输入: s = "a", t = "aa"
+# 输出: ""
+# 解释: t 中两个字符 'a' 均应包含在 s 的子串中，
+# 因此没有符合条件的子字符串，返回空字符串。
+#
+#
+#
+# 提示：
+#
+#
+# 1
+# s 和 t 由英文字母组成
+#
+#
+#
+# 进阶：你能设计一个在 o(n) 时间内解决此问题的算法吗？
+#
 
 # @lc code=start
+'''
+双指针
+右指针前进,左指针缩略
+找到一个局部最优解时,左指针前进一位
+所处字符数量恰好时进判断
+'''
 
 
 class Solution:
     def minWindow(self, s: str, t: str) -> str:
-
-        if len(t) == 0:
+        if len(s) < len(t):
+            return ''
+        if t == '':
             return ''
 
-        need = {}
+        d = {}
         for c in t:
-            if c not in need:
-                need[c] = 1
+            if c not in d:
+                d[c] = 1
             else:
-                need[c] = need[c] + 1
-
-        actual = dict(need)
+                d[c] += 1
 
         res = ''
-        left = 0
-        right = 0
-        for c in s[right:]:
-            if c not in need:
-                right += 1
+
+        def check():
+            for count in d.values():
+                if count > 0:
+                    return False
+            return True
+
+        end = 0
+        for n in range(len(s)):
+            now_c = s[n]
+            if now_c not in d:
+                continue
+
+            d[now_c] -= 1
+
+            if d[s[n]] != 0:
+                continue
+
+            if check() == False:
+                continue
+
+            while True:
+                c = s[end]
+                if c in d:
+                    d[c] += 1
+                    if d[c] > 0:
+                        now = s[end:n+1]
+                        end += 1
+                        break
+                end += 1
+
+            if res == '':
+                res = now
             else:
-                actual[c] = actual[c] - 1
-                right += 1
-
-            yes = True
-            for v in actual.values():
-                if v > 0:
-                    yes = False
-
-            if yes == True:
-                for c in s[left:right]:
-                    if c not in need:
-                        left += 1
-                    else:
-                        if actual[c] == 0:
-                            if res == '':
-                                res = s[left:right]
-                            else:
-                                if len(s[left:right]) < len(res):
-                                    res = s[left:right]
-                            left += 1
-                            actual[c] += 1
-                            break
-                        else:
-                            left += 1
-                            actual[c] += 1
+                if len(now) < len(res):
+                    res = now
 
         return res
+
         # @lc code=end

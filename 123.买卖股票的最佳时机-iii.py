@@ -1,60 +1,103 @@
-'''
-Author: your name
-Date: 2020-12-24 08:18:28
-LastEditTime: 2020-12-24 08:22:26
-LastEditors: Please set LastEditors
-Description: In User Settings Edit
-FilePath: /leetcode/123.买卖股票的最佳时机-iii.py
-'''
 #
 # @lc app=leetcode.cn id=123 lang=python3
 #
 # [123] 买卖股票的最佳时机 III
 #
+# https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iii/description/
+#
+# algorithms
+# Hard (53.42%)
+# Likes:    869
+# Dislikes: 0
+# Total Accepted:    127.9K
+# Total Submissions: 239.2K
+# Testcase Example:  '[3,3,5,0,0,3,1,4]'
+#
+# 给定一个数组，它的第 i 个元素是一支给定的股票在第 i 天的价格。
+#
+# 设计一个算法来计算你所能获取的最大利润。你最多可以完成 两笔 交易。
+#
+# 注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
+#
+#
+#
+# 示例 1:
+#
+#
+# 输入：prices = [3,3,5,0,0,3,1,4]
+# 输出：6
+# 解释：在第 4 天（股票价格 = 0）的时候买入，在第 6 天（股票价格 = 3）的时候卖出，这笔交易所能获得利润 = 3-0 = 3 。
+# 随后，在第 7 天（股票价格 = 1）的时候买入，在第 8 天 （股票价格 = 4）的时候卖出，这笔交易所能获得利润 = 4-1 = 3 。
+#
+# 示例 2：
+#
+#
+# 输入：prices = [1,2,3,4,5]
+# 输出：4
+# 解释：在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4
+# 。
+# 注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。
+# 因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。
+#
+#
+# 示例 3：
+#
+#
+# 输入：prices = [7,6,4,3,1]
+# 输出：0
+# 解释：在这个情况下, 没有交易完成, 所以最大利润为 0。
+#
+# 示例 4：
+#
+#
+# 输入：prices = [1]
+# 输出：0
+#
+#
+#
+#
+# 提示：
+#
+#
+# 1
+# 0
+#
+#
+#
 
-'''
-基础：
-    买卖股票的最佳时机 IV
-穷举所有状态
-状态维度：dp[day][k][have]
-    第几天交易：day
-    是否持有股票：have
-    已经做了的最大交易次数：k(一次交易包括买入和卖出，这里就算只做了买入，也算一次交易)
-最优子结构：获得的利润
-选择：
-    持有时，卖出或不动
-    未持有时，买入或不动
-base_case：
-    dp[day][0][0]=0
-    dp[day][0][1]=-infinity
-    dp[-1][k][0]=0
-    dp[-1][k][1]=-infinity
-状态转移：（由今天的状态反推昨天的操作）
-    如果have=0
-        dp[i][k][0]=max(dp[i-1][k][0], dp[i-1][k-1][1] + prices[i])
-    如果have-1
-        dp[i][k][1]=max(dp[i-1][k][1], dp[i-1][k-1][0] - prices[i])
-    
-'''
 # @lc code=start
+'''
+状态：dp[k, i,has] 已经做了k次交易（只要买就算一次交易）第i天,has是否有股票
+选择：
+    买入：
+        dp[k, i,1] = dp[k-1,i-1,0] - p[i]
+    卖出：
+        dp[k, i,0] = dp[k, i-1,1] + p[i]
+    啥也不做：
+        dp[k, i,0] = dp[k, i-1,0]
+        dp[k, i,1] = dp[k, i-1,1]
+    
+    dp[k,i,0] = max(dp[k,i-1,1] + p[i], dp[k, i-1,0])
+    dp[k,i,1] = max(dp[k-1,i-1,0] - p[i],  dp[k,i-1,1])
+
+base_case:
+    dp[k][0][1] = -prices[0] k=[0,2],其余为0
+'''
 
 
 class Solution:
     def maxProfit(self, prices: List[int]) -> int:
-        dp = {}
-        k = 2
-        for day in range(-1, len(prices)):
-            dp[day, 0, 1] = -float('INF')
-            dp[day, 0, 0] = 0
-        for k in range(0, k + 1):
-            dp[-1, k, 0] = 0
-            dp[-1, k, 1] = -float('INF')
+        max_k = 2
+        dp = [[[0, 0] for n in range(len(prices) + 1)] for k in range(max_k+1)]
+        for n in range(max_k+1):
+            dp[n][0][1] = -prices[0]
+        res = 0
+        for n in range(len(prices)):
+            n = n+1
+            for k in range(1, max_k+1):
+                dp[k][n][0] = max(dp[k][n-1][1] + prices[n-1], dp[k][n-1][0])
+                dp[k][n][1] = max(dp[k-1][n-1][0] - prices[n-1], dp[k][n-1][1])
+            res = max(res, dp[k][n][0], dp[k][n][1])
 
-        for day in range(len(prices)):
-            for m in range(1, k + 1):
-                dp[day, m, 0] = max(
-                    dp[day-1, m, 0], dp[day - 1, m, 1] + prices[day])
-                dp[day, m, 1] = max(
-                    dp[day-1, m, 1], dp[day - 1, m - 1, 0] - prices[day])
-        return dp[len(prices) - 1, k, 0]
-        # @lc code=end
+        return res
+# @lc code=end

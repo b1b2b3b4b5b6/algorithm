@@ -1,91 +1,98 @@
-'''
-Author: your name
-Date: 2020-12-25 08:52:00
-LastEditTime: 2020-12-25 11:29:13
-LastEditors: Please set LastEditors
-Description: In User Settings Edit
-FilePath: /leetcode/1143.最长公共子序列.py
-'''
 #
 # @lc app=leetcode.cn id=1143 lang=python3
 #
 # [1143] 最长公共子序列
 #
-'''
-思路1
-状态：
-    要匹配的字符串位置，i，j
-最优子结构：
-    返回最大的公共子序列长
-选择：
-    选择位置
-状态转移：
-    dp[i,j] = max{所有字符相同的可能性} + 1
-base_cases：
-    找不到相同字符：返回0
+# https://leetcode-cn.com/problems/longest-common-subsequence/description/
+#
+# algorithms
+# Medium (63.64%)
+# Likes:    709
+# Dislikes: 0
+# Total Accepted:    165.6K
+# Total Submissions: 260.2K
+# Testcase Example:  '"abcde"\n"ace"'
+#
+# 给定两个字符串 text1 和 text2，返回这两个字符串的最长 公共子序列 的长度。如果不存在 公共子序列 ，返回 0 。
+#
+# 一个字符串的 子序列
+# 是指这样一个新的字符串：它是由原字符串在不改变字符的相对顺序的情况下删除某些字符（也可以不删除任何字符）后组成的新字符串。
+#
+#
+# 例如，"ace" 是 "abcde" 的子序列，但 "aec" 不是 "abcde" 的子序列。
+#
+#
+# 两个字符串的 公共子序列 是这两个字符串所共同拥有的子序列。
+#
+#
+#
+# 示例 1：
+#
+#
+# 输入：text1 = "abcde", text2 = "ace"
+# 输出：3
+# 解释：最长公共子序列是 "ace" ，它的长度为 3 。
+#
+#
+# 示例 2：
+#
+#
+# 输入：text1 = "abc", text2 = "abc"
+# 输出：3
+# 解释：最长公共子序列是 "abc" ，它的长度为 3 。
+#
+#
+# 示例 3：
+#
+#
+# 输入：text1 = "abc", text2 = "def"
+# 输出：0
+# 解释：两个字符串没有公共子序列，返回 0 。
+#
+#
+#
+#
+# 提示：
+#
+#
+# 1
+# text1 和 text2 仅由小写英文字符组成。
+#
+#
+#
 
-思路2,不对
-
-状态：当前配对
-最优子结构：返回最大配对数量
-选择：大于当前配对的所有可能
-状态转移：
-    dp[s] = max{所有可能性} + 1
-base_case:
-    无可用配对，返回0
-
-思路3
-状态：
-    要匹配的字符串位置，i，j
-最优子结构：
-    返回最大的公共子序列长
-选择：
-    选择位置
-状态转移：
-    有匹配时：dp[i,j] = dp[i+1,j+1] + 1 
-    无匹配：dp[i,j] = max(dp(i+1,j), dp(i, j+1))
-base_cases：
-    i或j到头, 返回0
-'''
 # @lc code=start
+'''
+存在最优子问题
+使用动态规划
 
-# 递归，备忘录
+状态: dp(i,j) i:s1的位置 j:s2的位置 返回最大子序列长度
+选择:
+    s1[i] == s2[j]:
+        return dp(i+1, j+1) + 1
+    s1[i] 1= s2[j]:
+        return max(dp(i, j+1), dp(i+1, j))
+base_case:
+    i >= len(s1) or j >= len(s2):
+        return 0
+
+'''
 
 
 class Solution:
     def longestCommonSubsequence(self, text1: str, text2: str) -> int:
-
-        len_1 = len(text1)
-        len_2 = len(text2)
-
         memo = {}
 
         def dp(i, j):
-            if i >= len_1 or j >= len_2:
+            if i >= len(text1) or j >= len(text2):
                 return 0
             if (i, j) in memo:
-                return memo[i, j]
-
+                return memo[(i, j)]
             if text1[i] == text2[j]:
-                memo[i, j] = dp(i + 1, j + 1) + 1
+                memo[(i, j)] = dp(i+1, j+1) + 1
             else:
-                memo[i, j] = max(dp(i+1, j), dp(i, j+1))
-            return memo[i, j]
-        return dp(0, 0)
-        # @lc code=end
-# 递归 超时
+                memo[(i, j)] = max(dp(i, j+1), dp(i+1, j))
 
-# class Solution:
-#     def longestCommonSubsequence(self, text1: str, text2: str) -> int:
-#         @lru_cache
-#         def dp(i, j):
-#             res = -float('INF')
-#             for mi in range(i, len(text1)):
-#                 for mj in range(j, len(text2)):
-#                     if text1[mi] == text2[mj]:
-#                         res = max(res, dp(mi + 1, mj + 1))
-#             if res >= 0:
-#                 return res + 1
-#             else:
-#                 return 0
-#         return dp(0, 0)
+            return memo[(i, j)]
+
+        return dp(0, 0)

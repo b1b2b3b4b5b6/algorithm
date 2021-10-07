@@ -1,137 +1,100 @@
-'''
-Author: your name
-Date: 2020-12-18 05:29:15
-LastEditTime: 2020-12-22 09:23:10
-LastEditors: your name
-Description: In User Settings Edit
-FilePath: /leetcode/300.最长递增子序列.py
-'''
-# @before-stub-for-debug-begin
-from python3problem300 import *
-from typing import *
-# @before-stub-for-debug-end
-
-'''
-Author: your name
-Date: 2020-12-18 05:29:15
-LastEditTime: 2020-12-22 09:13:18
-LastEditors: Please set LastEditors
-Description: In User Settings Edit
-FilePath: /leetcode/300.最长递增子序列.py
-'''
 #
 # @lc app=leetcode.cn id=300 lang=python3
 #
 # [300] 最长递增子序列
 #
+# https://leetcode-cn.com/problems/longest-increasing-subsequence/description/
+#
+# algorithms
+# Medium (51.20%)
+# Likes:    1905
+# Dislikes: 0
+# Total Accepted:    357.2K
+# Total Submissions: 693.2K
+# Testcase Example:  '[10,9,2,5,3,7,101,18]'
+#
+# 给你一个整数数组 nums ，找到其中最长严格递增子序列的长度。
+#
+# 子序列是由数组派生而来的序列，删除（或不删除）数组中的元素而不改变其余元素的顺序。例如，[3,6,2,7] 是数组 [0,3,1,6,2,2,7]
+# 的子序列。
+#
+#
+# 示例 1：
+#
+#
+# 输入：nums = [10,9,2,5,3,7,101,18]
+# 输出：4
+# 解释：最长递增子序列是 [2,3,7,101]，因此长度为 4 。
+#
+#
+# 示例 2：
+#
+#
+# 输入：nums = [0,1,0,3,2,3]
+# 输出：4
+#
+#
+# 示例 3：
+#
+#
+# 输入：nums = [7,7,7,7,7,7,7]
+# 输出：1
+#
+#
+#
+#
+# 提示：
+#
+#
+# 1
+# -10^4
+#
+#
+#
+#
+# 进阶：
+#
+#
+# 你可以设计时间复杂度为 O(n^2) 的解决方案吗？
+# 你能将算法的时间复杂度降低到 O(n log(n)) 吗?
+#
+#
+#
 
 # @lc code=start
-
-
 '''
-暴力检索：
-对每个元素，作为起点，对后面的元素进行计算，分别获得最大序列长
-得到max(l1, l2, l3,...)
-由于获得后面的元素递归值，才能进行下一步，所以是后序遍历
-'''
+递归穷举：
 
-'''
-状态转移方程：
-f(n)初始为1
-f(n)=max{f{n-1}, f{n-2}, ... f(0)} + 1, num[n] > num[n-1]
-'''
+面对状态：以第n个数字为首的最长递增序列长度，dp(n)
 
-# 使用二分查找，TODO::目前还不理解
+选择:
+    取后面所有小于num(n)的数字为首的dn(i)
+    得到max(dp(i)) + 1
+
+base_case:
+    隐含在选择中
+
+使用备忘录
+'''
 
 
 class Solution:
     def lengthOfLIS(self, nums: List[int]) -> int:
-        stack = []
+        memo = {}
 
-        def find_index(num):
-            l, r = 0, len(stack)
-            while l < r:
-                mid = l + r >> 1
-                if stack[mid] >= num:
-                    r = mid
-                else:
-                    l = mid + 1
+        def dp(n):
+            if n in memo:
+                return memo[n]
 
-            return r
+            res = 1
+            for i in range(n, len(nums)):
+                if nums[i] > nums[n]:
+                    res = max(res, 1 + dp(i))
+            memo[n] = res
+            return memo[n]
 
-        for num in nums:
-            if not stack or num > stack[-1]:
-                stack.append(num)
-            else:
-                position = find_index(num)
-                stack[position] = num
+        for n in range(len(nums)):
+            dp(n)
 
-        return len(stack)
-
+        return max(memo.values())
         # @lc code=end
-
-
-# # 使用迭代
-
-# 时间复杂度：N^2
-# 空间复杂度：N
-# class Solution:
-#     def lengthOfLIS(self, nums: List[int]) -> int:
-#         memo = [1] * len(nums)
-
-#         for offset in range(len(nums)):
-#             for n in range(0, offset):
-#                 if nums[n] < nums[offset]:
-#                     memo[offset] = max(memo[offset], memo[n] + 1)
-
-#         return max(memo)
-
-
-# 使用备忘录
-
-# 时间复杂度：N^2
-# 空间复杂度：N
-# class Solution:
-#     def lengthOfLIS(self, nums: List[int]) -> int:
-#         memo = {}
-
-#         def dp(offset):
-#             if offset in memo:
-#                 return memo[offset]
-#             if offset == len(nums) - 1:
-#                 return 1
-#             max_res = 1
-#             for n in range(offset + 1, len(nums)):
-#                 if nums[n] <= nums[offset]:
-#                     continue
-#                 child_res = dp(n)
-#                 max_res = max(max_res, child_res + 1)
-#             memo[offset] = max_res
-#             return max_res
-
-#         max_res = 0
-#         for k in range(len(nums)):
-#             max_res = max(max_res, dp(k))
-
-#         return max_res
-
-
-# DPS解法超时
-# class Solution:
-#     def lengthOfLIS(self, nums: List[int]) -> int:
-#         def dp(offset):
-#             if offset == len(nums) - 1:
-#                 return 1
-#             max_res = 1
-#             for n in range(offset + 1, len(nums)):
-#                 if nums[n] <= nums[offset]:
-#                     continue
-#                 child_res = dp(n)
-#                 max_res = max(max_res, child_res + 1)
-#             return max_res
-
-#         max_res = 0
-#         for k in range(len(nums)):
-#             max_res = max(max_res, dp(k))
-
-#         return max_res

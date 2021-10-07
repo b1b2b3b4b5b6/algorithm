@@ -1,73 +1,94 @@
-'''
-Author: your name
-Date: 2020-12-24 13:39:28
-LastEditTime: 2021-03-25 06:12:31
-LastEditors: Please set LastEditors
-Description: In User Settings Edit
-FilePath: /leetcode/651.4-键键盘.py
-'''
 #
 # @lc app=leetcode.cn id=651 lang=python3
 #
 # [651] 4键键盘
 #
-
+# https://leetcode-cn.com/problems/4-keys-keyboard/description/
+#
+# algorithms
+# Medium (58.24%)
+# Likes:    67
+# Dislikes: 0
+# Total Accepted:    3.7K
+# Total Submissions: 6.4K
+# Testcase Example:  '3'
+#
+# 假设你有一个特殊的键盘包含下面的按键：
+#
+# Key 1: (A)：在屏幕上打印一个 'A'。
+#
+# Key 2: (Ctrl-A)：选中整个屏幕。
+#
+# Key 3: (Ctrl-C)：复制选中区域到缓冲区。
+#
+# Key 4: (Ctrl-V)：将缓冲区内容输出到上次输入的结束位置，并显示在屏幕上。
+#
+# 现在，你只可以按键 N 次（使用上述四种按键），请问屏幕上最多可以显示几个 'A'呢？
+#
+# 样例 1:
+#
+# 输入: N = 3
+# 输出: 3
+# 解释:
+# 我们最多可以在屏幕上显示三个'A'通过如下顺序按键：
+# A, A, A
+#
+#
+#
+#
+# 样例 2:
+#
+# 输入: N = 7
+# 输出: 9
+# 解释:
+# 我们最多可以在屏幕上显示九个'A'通过如下顺序按键：
+# A, A, A, Ctrl A, Ctrl C, Ctrl V, Ctrl V
+#
+#
+#
+#
+# 注释:
+#
+#
+# 1 <= N <= 50
+# 结果不会超过 32 位有符号整数范围。
+#
+#
+#
+#
+#
 
 # @lc code=start
 
+'''
+贪心法:必然是以下2个选择之一
+    key1
+    一个key2和key3,若干个key4
+
+递归+备忘录+贪心
 
 '''
-状态：
-    屏幕A的数量，剩余的按键数n,缓冲区A数量m
-最优子结构：
-    返回数量
-base_case：
-    当n<=0，到达终点，返回数量
-选择：
-    按下其中一个按键
-状态转移：
-    dp=max（3种情况）
-
-分析可得：key2，key3只有连用才有意义，故合并
-
-进一步考虑：
-    贪心法(不会)：最优操作必然先输入若干个A，然后全选复制，若干粘贴，全选复制，若干粘贴
-    过滤一些情况
-'''
-
-# 算法复杂度：n^3
-# 空间复杂度：n^3
-# 会超时
 
 
 class Solution:
-    def maxA(self, N: int) -> int:
+    def maxA(self, n: int) -> int:
+
         memo = {}
 
-        def dp(i, n, m):
-            if n <= 0:
-                return i
-            if (i, n, m) in memo:
-                return memo[i, n, m]
+        def dp(p):
+            if p == 0:
+                return 0
+            if p in memo:
+                return memo[p]
+            res1 = dp(p-1) + 1
 
-            if i > 8:
-                max1 = - float('INF')
-            else:
-                max1 = dp(i + 1, n - 1, m)
-            if m >= i:
-                max2 = - float('INF')
-            else:
-                max2 = dp(i, n - 2, i)
-            if m <= 0:
-                max3 = - float('INF')
-            else:
-                max3 = dp(i + m, n - 1, m)
-            sel = max(
-                max1,
-                max2,
-                max3
-            )
-            memo[i, n, m] = sel
-            return sel
+            res2 = 0
+            if n >= 3:
+                for i in range(0, p-2):
+                    res2 = max(res2, dp(p-2 - i)*(i+1))
+            memo[p] = max(res1, res2)
+            return memo[p]
 
-        return dp(0, N, 0)
+        return dp(n)
+
+        # @lc code=end
