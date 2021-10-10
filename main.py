@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO,
 
 
 def get_config() -> dict:
-    config = {'src_dir': 'origin/', 'dst_dir': 'show/'}
+    config = {'src_dir': 'origin/', 'dst_dir': 'key_show/'}
     if config['dst_dir'] in ['', './']:
         logging.error('dst_dir must have its own dir!')
         exit(-1)
