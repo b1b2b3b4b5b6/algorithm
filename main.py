@@ -1,5 +1,9 @@
 # -*-coding:utf-8-*-
-
+'''
+生成关键字目录
+硬链接
+支支持linux
+'''
 
 import logging
 import os
@@ -10,11 +14,9 @@ import subprocess
 logging.basicConfig(level=logging.INFO,
                     format='[%(asctime)s][%(levelname)s]%(filename)s[%(lineno)d]:  %(message)s', datefmt='%d/%b/%Y %H:%M:%S')
 
-g_config = {'src_dir': 'origin/', 'dst_dir': 'show/'}
-
 
 def get_config() -> dict:
-    config = g_config
+    config = {'src_dir': 'origin/', 'dst_dir': 'show/'}
     if config['dst_dir'] in ['', './']:
         logging.error('dst_dir must have its own dir!')
         exit(-1)
