@@ -1,3 +1,11 @@
+'''
+Author: b1b2b3b4b5b6 a1439458305@163.com
+Date: 2021-10-10 19:59:55
+LastEditors: b1b2b3b4b5b6 a1439458305@163.com
+LastEditTime: 2022-08-26 15:43:06
+FilePath: /leetcode/main.py
+Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+'''
 # -*-coding:utf-8-*-
 '''
 生成关键字目录
@@ -16,7 +24,7 @@ logging.basicConfig(level=logging.INFO,
 
 
 def get_config() -> dict:
-    config = {'src_dir': 'origin/', 'dst_dir': 'key_show/'}
+    config = {'src_dir': 'python/', 'dst_dir': 'key_show/'}
     if config['dst_dir'] in ['', './']:
         logging.error('dst_dir must have its own dir!')
         exit(-1)
