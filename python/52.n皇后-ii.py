@@ -1,25 +1,31 @@
+'''
+Author: b1b2b3b4b5b6 a1439458305@163.com
+Date: 2022-09-06 09:15:11
+LastEditors: b1b2b3b4b5b6 a1439458305@163.com
+LastEditTime: 2022-09-07 10:31:14
+FilePath: /leetcode/python/52.n皇后-ii.py
+Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+'''
 #
-# @lc app=leetcode.cn id=51 lang=python3
+# @lc app=leetcode.cn id=52 lang=python3
 #
-# [51] N 皇后
+# [52] N皇后 II
 #
-# https://leetcode-cn.com/problems/n-queens/description/
+# https://leetcode.cn/problems/n-queens-ii/description/
 #
 # algorithms
-# Hard (73.89%)
-# Likes:    995
+# Hard (82.28%)
+# Likes:    389
 # Dislikes: 0
-# Total Accepted:    147.7K
-# Total Submissions: 199.8K
+# Total Accepted:    102K
+# Total Submissions: 123.9K
 # Testcase Example:  '4'
 #
-# n 皇后问题 研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并且使皇后彼此之间不能相互攻击。
+# n 皇后问题 研究的是如何将 n 个皇后放置在 n × n 的棋盘上，并且使皇后彼此之间不能相互攻击。
 #
-# 给你一个整数 n ，返回所有不同的 n 皇后问题 的解决方案。
+# 给你一个整数 n ，返回 n 皇后问题 不同的解决方案的数量。
 #
 #
-#
-# 每一种解法包含一个不同的 n 皇后问题 的棋子放置方案，该方案中 'Q' 和 '.' 分别代表了皇后和空位。
 #
 #
 #
@@ -27,7 +33,7 @@
 #
 #
 # 输入：n = 4
-# 输出：[[".Q..","...Q","Q...","..Q."],["..Q.","Q...","...Q",".Q.."]]
+# 输出：2
 # 解释：如上图所示，4 皇后问题存在两个不同的解法。
 #
 #
@@ -35,7 +41,7 @@
 #
 #
 # 输入：n = 1
-# 输出：[["Q"]]
+# 输出：1
 #
 #
 #
@@ -43,8 +49,7 @@
 # 提示：
 #
 #
-# 1
-# 皇后彼此不能相互攻击，也就是说：任何两个皇后都不能处于同一条横行、纵行或斜线上。
+# 1 <= n <= 9
 #
 #
 #
@@ -52,7 +57,6 @@
 #
 
 # @lc code=start
-
 '''
 关键字
 动态规划
@@ -71,7 +75,7 @@ base_case：
 
 
 class Solution:
-    def solveNQueens(self, n: int) -> List[List[str]]:
+    def totalNQueens(self, n: int) -> int:
         ori = [['.' for j in range(n)] for i in range(n)]
         res = []
 
@@ -105,7 +109,6 @@ class Solution:
             return
 
         dp(ori, n)
-        print(res)
         out = []
         for chese in res:
             out_chese = []
@@ -115,5 +118,5 @@ class Solution:
                 out_chese.append(s)
 
             out.append(out_chese)
-        return out
+        return len(out)
         # @lc code=end

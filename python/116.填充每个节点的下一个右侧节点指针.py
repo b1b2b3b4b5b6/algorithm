@@ -2,7 +2,7 @@
 Author: b1b2b3b4b5b6 a1439458305@163.com
 Date: 2022-08-31 10:39:48
 LastEditors: b1b2b3b4b5b6 a1439458305@163.com
-LastEditTime: 2022-08-31 11:26:34
+LastEditTime: 2022-08-31 11:29:13
 FilePath: /leetcode/python/116.填充每个节点的下一个右侧节点指针.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -96,8 +96,6 @@ BFS
 
 class Solution:
     def connect(self, root: 'Optional[Node]') -> 'Optional[Node]':
-        h_dict = {}
-
         q = []
         if root is not None:
             q.append(root)
