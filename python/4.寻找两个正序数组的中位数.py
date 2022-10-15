@@ -1,3 +1,11 @@
+'''
+Author: b1b2b3b4b5b6 a1439458305@163.com
+Date: 2022-09-01 16:05:35
+LastEditors: b1b2b3b4b5b6 a1439458305@163.com
+LastEditTime: 2022-10-02 22:10:40
+FilePath: /leetcode/python/4.寻找两个正序数组的中位数.py
+Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+'''
 #
 # @lc app=leetcode.cn id=4 lang=python3
 #
@@ -53,8 +61,8 @@
 #
 '''
 关键字
-二分法
-二分法才能达到log(m+n)的时间复杂度
+技巧
+同时遍历两个数组，相当于对两个数组排序
 '''
 
 # @lc code=start
